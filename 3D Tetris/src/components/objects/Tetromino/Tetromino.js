@@ -1,10 +1,13 @@
 import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D } from 'three';
+import { globals } from '../../../globals';
 
 class Cube {
     constructor(cubeColor) {
+        let BLOCK_SIZE = globals.BLOCK_SIZE;
+
         // Create Cube using three.js
         // Source: https://threejs.org/docs/#api/en/geometries/BoxGeometry
-        const geometry = new BoxGeometry( 1, 1, 1 );
+        const geometry = new BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         const material = new MeshBasicMaterial( {color: cubeColor} );
         const cube = new Mesh( geometry, material );
         return cube;
@@ -16,6 +19,8 @@ class Tetromino extends Group {
 
         // Call Group constructor
         super();
+
+        let BLOCK_SIZE = globals.BLOCK_SIZE;
 
         // Dictionary of types of tetrominoes, describing their color and
         // each cubie's offset from the center.
@@ -31,12 +36,14 @@ class Tetromino extends Group {
         
         // Create tetromino
         let mino = new Group();
-        
+
         let offsets = minoTypes[type]["offsets"];
         let color = minoTypes[type]["color"];
         for (let i = 0; i < offsets.length; i++) {
             let cube = new Cube(color);
-            cube.position.set(offsets[i][0], offsets[i][1], offsets[i][2]);
+            cube.position.x += offsets[i][0] * BLOCK_SIZE;
+            cube.position.y += offsets[i][1] * BLOCK_SIZE;
+            cube.position.z += offsets[i][2] * BLOCK_SIZE;
             mino.add(cube);
         }
 
