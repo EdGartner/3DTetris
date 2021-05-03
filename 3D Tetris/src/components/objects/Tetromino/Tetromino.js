@@ -35,8 +35,6 @@ class Tetromino extends Group {
                             };
         
         // Create tetromino
-        let mino = new Group();
-
         let offsets = minoTypes[type]["offsets"];
         let color = minoTypes[type]["color"];
         for (let i = 0; i < offsets.length; i++) {
@@ -44,10 +42,25 @@ class Tetromino extends Group {
             cube.position.x += offsets[i][0] * BLOCK_SIZE;
             cube.position.y += offsets[i][1] * BLOCK_SIZE;
             cube.position.z += offsets[i][2] * BLOCK_SIZE;
-            mino.add(cube);
+            this.add(cube);
         }
+    }
 
-        return mino;
+    // Remove block i from Tetromino
+    cut(i) {
+        this.remove(this.children[i]);
+    }
+
+    // Rotate Tetromino by rad radians on axis ax="x"||"y"||"z"
+    rotate(ax, rads) {
+        if (ax === "x") {
+            this.rotation.x = rads;
+        } else if (ax === "y") {
+            this.rotation.y = rads;
+        } else if (ax === "z") {
+            this.rotation.z = rads;
+        }
+        
     }
 }
 
