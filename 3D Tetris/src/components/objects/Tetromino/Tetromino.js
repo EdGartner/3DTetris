@@ -1,8 +1,12 @@
-import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D } from 'three';
+import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D, EdgesGeometry, LineSegments, LineBasicMaterial } from 'three';
 import { globals } from '../../../globals';
 
-class Cube {
+class Cube extends Mesh {
     constructor(cubeColor) {
+
+        // Call Mesh constructor
+        super();
+
         let BLOCK_SIZE = globals.BLOCK_SIZE;
 
         // Create Cube using three.js
@@ -10,7 +14,15 @@ class Cube {
         const geometry = new BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         const material = new MeshBasicMaterial( {color: cubeColor} );
         const cube = new Mesh( geometry, material );
-        return cube;
+        this.copy(cube);
+
+        // Create edges using three.js
+        // Source: https://threejs.org/docs/#api/en/geometries/EdgesGeometry
+        const edges = new EdgesGeometry( geometry );
+        // Note: linewidth is a parameter, but according to documentation
+        // it is ignored on most platforms
+        const outline = new LineSegments( edges, new LineBasicMaterial( { color: 0x000000 } ) );
+        this.outline = outline;
     }
 }
 
@@ -35,13 +47,15 @@ class Tetromino extends Group {
                             };
         
         // Create tetromino
-        let offsets = minoTypes[type]["offsets"];
+        this.offsets = minoTypes[type]["offsets"];
+
         let color = minoTypes[type]["color"];
-        for (let i = 0; i < offsets.length; i++) {
+        for (let i = 0; i < this.offsets.length; i++) {
             let cube = new Cube(color);
-            cube.position.x += offsets[i][0] * BLOCK_SIZE;
-            cube.position.y += offsets[i][1] * BLOCK_SIZE;
-            cube.position.z += offsets[i][2] * BLOCK_SIZE;
+            console.log(cube);
+            cube.position.x += this.offsets[i][0] * BLOCK_SIZE;
+            cube.position.y += this.offsets[i][1] * BLOCK_SIZE;
+            cube.position.z += this.offsets[i][2] * BLOCK_SIZE;
             this.add(cube);
         }
     }
@@ -59,8 +73,22 @@ class Tetromino extends Group {
             this.rotation.y = rads;
         } else if (ax === "z") {
             this.rotation.z = rads;
+        }   
+    }
+
+    getOutlines() {
+        let BLOCK_SIZE = globals.BLOCK_SIZE;
+
+        let outlines = new Group();
+        for (let i = 0; i < this.children.length; i++) {
+            let outline = this.children[i].outline.clone();
+            outline.translateX(this.offsets[i][0] * BLOCK_SIZE);
+            outline.translateY(this.offsets[i][1] * BLOCK_SIZE);
+            outline.translateZ(this.offsets[i][2] * BLOCK_SIZE);
+            outlines.add(outline);
         }
-        
+
+        return outlines;
     }
 }
 
