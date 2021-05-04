@@ -1,7 +1,7 @@
 import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D, EdgesGeometry, LineSegments, LineBasicMaterial } from 'three';
 import { globals } from '../../../globals';
 
-class Cube extends Mesh {
+class Cube extends Group {
     constructor(cubeColor) {
 
         // Call Mesh constructor
@@ -14,7 +14,7 @@ class Cube extends Mesh {
         const geometry = new BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         const material = new MeshBasicMaterial( {color: cubeColor} );
         const cube = new Mesh( geometry, material );
-        this.copy(cube);
+        this.add(cube);
 
         // Create edges using three.js
         // Source: https://threejs.org/docs/#api/en/geometries/EdgesGeometry
@@ -22,7 +22,7 @@ class Cube extends Mesh {
         // Note: linewidth is a parameter, but according to documentation
         // it is ignored on most platforms
         const outline = new LineSegments( edges, new LineBasicMaterial( { color: 0x000000 } ) );
-        this.outline = outline;
+        this.add(outline);
     }
 }
 
@@ -47,15 +47,14 @@ class Tetromino extends Group {
                             };
         
         // Create tetromino
-        this.offsets = minoTypes[type]["offsets"];
+        let offsets = minoTypes[type]["offsets"];
 
         let color = minoTypes[type]["color"];
-        for (let i = 0; i < this.offsets.length; i++) {
+        for (let i = 0; i < offsets.length; i++) {
             let cube = new Cube(color);
-            console.log(cube);
-            cube.position.x += this.offsets[i][0] * BLOCK_SIZE;
-            cube.position.y += this.offsets[i][1] * BLOCK_SIZE;
-            cube.position.z += this.offsets[i][2] * BLOCK_SIZE;
+            cube.translateX(offsets[i][0] * BLOCK_SIZE);
+            cube.translateY(offsets[i][1] * BLOCK_SIZE);
+            cube.translateZ(offsets[i][2] * BLOCK_SIZE);
             this.add(cube);
         }
     }
@@ -67,6 +66,8 @@ class Tetromino extends Group {
 
     // Rotate Tetromino by rad radians on axis ax="x"||"y"||"z"
     rotate(ax, rads) {
+        ax = ax.toLowerCase();
+
         if (ax === "x") {
             this.rotation.x = rads;
         } else if (ax === "y") {
@@ -76,19 +77,17 @@ class Tetromino extends Group {
         }   
     }
 
-    getOutlines() {
-        let BLOCK_SIZE = globals.BLOCK_SIZE;
+    // Translate Tetromino by dist units on axis ax="x"||"y"||"z"
+    translate(ax, dist) {
+        ax = ax.toLowerCase();
 
-        let outlines = new Group();
-        for (let i = 0; i < this.children.length; i++) {
-            let outline = this.children[i].outline.clone();
-            outline.translateX(this.offsets[i][0] * BLOCK_SIZE);
-            outline.translateY(this.offsets[i][1] * BLOCK_SIZE);
-            outline.translateZ(this.offsets[i][2] * BLOCK_SIZE);
-            outlines.add(outline);
-        }
-
-        return outlines;
+        if (ax === "x") {
+            this.translateX(dist);
+        } else if (ax === "y") {
+            this.translateY(dist);
+        } else if (ax === "z") {
+            this.translateZ(dist);
+        }   
     }
 }
 

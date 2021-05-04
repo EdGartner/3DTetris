@@ -1,6 +1,6 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color } from 'three';
-import { Flower, Land } from 'objects';
+import { Tetromino } from 'objects';
 import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
@@ -19,10 +19,16 @@ class SeedScene extends Scene {
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-        const land = new Land();
-        const flower = new Flower(this);
+
+        const tetromino = new Tetromino("W");
+        tetromino.cut(2);
+
+        this.tetromino2 = new Tetromino("I");
+        tetromino.rotate("z", Math.PI / 2);
+        tetromino.translate("y", 4);
+
         const lights = new BasicLights();
-        this.add(land, flower, lights);
+        this.add(tetromino, this.tetromino2, lights);
 
         // Populate GUI
         this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
@@ -39,6 +45,10 @@ class SeedScene extends Scene {
         // Call update for each object in the updateList
         for (const obj of updateList) {
             obj.update(timeStamp);
+        }
+
+        if (timeStamp < 7000) {
+            this.tetromino2.translate("y", 0.01);
         }
     }
 }
