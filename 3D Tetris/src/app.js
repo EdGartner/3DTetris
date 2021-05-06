@@ -64,10 +64,14 @@ const handleImpactEvents = (event) => {
 
   // The vectors tom which each key code in this handler maps. (Change these if you like)
   const keyMap = {
-    w : -Math.PI / 2,
-    s: Math.PI / 2,
-    a: -Math.PI / 2,
-    d: Math.PI / 2,
+    w: new Vector3(-0.5, 0, 0),
+    s: new Vector3(0.5, 0, 0),
+    a: new Vector3(0, 0, 0.5),
+    d: new Vector3(0, 0, -0.5),
+    r: -Math.PI / 2,
+    f: Math.PI / 2,
+    z: -Math.PI / 2,
+    c: Math.PI / 2,
     q: Math.PI / 2,
     e: -Math.PI / 2,
   };
@@ -80,18 +84,20 @@ const handleImpactEvents = (event) => {
       case 'e':
         minos[0].rotateX(keyMap[event.key]);
         break;
-      case 'w':
+      case 'r':
         minos[0].rotateY(keyMap[event.key]);
         break;
-      case 's':
+      case 'f':
         minos[0].rotateY(keyMap[event.key]);
         break;
-      case 'd':
+      case 'z':
         minos[0].rotateZ(keyMap[event.key]);
         break;
-      case 'a':
+      case 'c':
         minos[0].rotateZ(keyMap[event.key]);
         break;
+      default:
+        minos[0].position.add(keyMap[event.key]);
     }
 
   }
