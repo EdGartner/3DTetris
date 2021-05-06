@@ -5,6 +5,7 @@ import { BasicLights } from 'lights';
 
 class SeedScene extends Scene {
     constructor() {
+
         // Call parent Scene() constructor
         super();
 
@@ -19,9 +20,11 @@ class SeedScene extends Scene {
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-
+        this.minoList = []
         const tetromino = new Tetromino("W");
         tetromino.cut(2);
+        this.minoList.push(tetromino);
+        console.log(this.minoList)
 
         this.tetromino2 = new Tetromino("I");
         tetromino.rotate("z", Math.PI / 2);

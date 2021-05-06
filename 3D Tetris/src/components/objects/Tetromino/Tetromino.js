@@ -45,7 +45,7 @@ class Tetromino extends Group {
                             A: {offsets: [[0,0,0],[1,0,0],[1,1,0],[0,0,1]], color: "purple"},
                             V: {offsets: [[0,0,0],[-1,0,0],[0,1,1],[0,0,1]], color: "gray"}
                             };
-        
+
         // Create tetromino
         let offsets = minoTypes[type]["offsets"];
 
@@ -74,7 +74,7 @@ class Tetromino extends Group {
             this.rotation.y = rads;
         } else if (ax === "z") {
             this.rotation.z = rads;
-        }   
+        }
     }
 
     // Translate Tetromino by dist units on axis ax="x"||"y"||"z"
@@ -87,7 +87,7 @@ class Tetromino extends Group {
             this.translateY(dist);
         } else if (ax === "z") {
             this.translateZ(dist);
-        }   
+        }
     }
 }
 

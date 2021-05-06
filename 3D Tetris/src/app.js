@@ -16,6 +16,7 @@ import { OrbitLock } from './orbitLock';
 const scene = new SeedScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
+const minos = scene.minoList;
 
 // Set up camera
 camera.position.set(6, 3, -10);
@@ -56,3 +57,43 @@ const windowResizeHandler = () => {
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
+
+const handleImpactEvents = (event) => {
+  // Ignore keypresses typed into a text box
+  if (event.target.tagName === "INPUT") { return; }
+
+  // The vectors tom which each key code in this handler maps. (Change these if you like)
+  const keyMap = {
+    w : -Math.PI / 2,
+    s: Math.PI / 2,
+    a: -Math.PI / 2,
+    d: Math.PI / 2,
+    q: Math.PI / 2,
+    e: -Math.PI / 2,
+  };
+
+  if (keyMap[event.key] !== undefined) {
+    switch (event.key) {
+      case 'q':
+        minos[0].rotateX(keyMap[event.key]);
+        break;
+      case 'e':
+        minos[0].rotateX(keyMap[event.key]);
+        break;
+      case 'w':
+        minos[0].rotateY(keyMap[event.key]);
+        break;
+      case 's':
+        minos[0].rotateY(keyMap[event.key]);
+        break;
+      case 'd':
+        minos[0].rotateZ(keyMap[event.key]);
+        break;
+      case 'a':
+        minos[0].rotateZ(keyMap[event.key]);
+        break;
+    }
+
+  }
+};
+window.addEventListener("keydown", handleImpactEvents);
