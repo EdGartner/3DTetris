@@ -8,7 +8,9 @@
  */
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { SeedScene } from 'scenes';
+import { OrbitLock } from './orbitLock';
 
 // Initialize core ThreeJS components
 const scene = new SeedScene();
@@ -28,16 +30,17 @@ document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
 // Set up controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.enablePan = false;
+const controls = new OrbitLock(camera, canvas);
+controls.minPolarAngle = 95 * Math.PI / 180;
+controls.maxPolarAngle = 170 * Math.PI / 180;
 controls.minDistance = 4;
 controls.maxDistance = 16;
-controls.update();
+window.addEventListener('click', function () {
+    controls.lock();
+}, false);
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    controls.update();
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
