@@ -36,11 +36,11 @@ class Tetromino extends Group {
 
         // Dictionary of types of tetrominoes, describing their color and
         // each cubie's offset from the center.
-        const minoTypes = { I: {offsets: [[0,-1,0],[0,0,0],[0,1,0],[0,2,0]], color: "white"},
-                            L: {offsets: [[0,-1,0],[0,0,0],[0,1,0],[1,1,0]], color: "blue"},
-                            T: {offsets: [[0,-1,0],[0,0,0],[0,1,0],[1,0,0]], color: "green"},
+        const minoTypes = { I: {offsets: [[0,0,0],[1,0,0],[2,0,0],[-1,0,0]], color: "white"},
+                            L: {offsets: [[1,0,0],[0,1,0],[-1,1,0],[1,1,0]], color: "blue"},
+                            T: {offsets: [[0,0,0],[0,1,0],[-1,1,0],[1,1,0]], color: "green"},
                             O: {offsets: [[0,0,0],[0,1,0],[1,0,0],[1,1,0]], color: "yellow"},
-                            S: {offsets: [[0,-1,0],[0,0,0],[1,0,0],[1,1,0]], color: "orange"},
+                            S: {offsets: [[0,0,0],[-1,0,0],[0,1,0],[1,1,0]], color: "orange"},
                             W: {offsets: [[0,0,0],[1,0,0],[0,1,0],[0,0,1]], color: "red"},
                             A: {offsets: [[0,0,0],[1,0,0],[1,1,0],[0,0,1]], color: "purple"},
                             V: {offsets: [[0,0,0],[-1,0,0],[0,1,1],[0,0,1]], color: "gray"}
