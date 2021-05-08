@@ -1,4 +1,4 @@
-import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D, EdgesGeometry, LineSegments, LineBasicMaterial } from 'three';
+import { Group, BoxGeometry, MeshBasicMaterial, Mesh, Object3D, EdgesGeometry, LineSegments, LineBasicMaterial, Vector3 } from 'three';
 import { globals } from '../../../globals';
 
 class Cube extends Group {
@@ -67,27 +67,30 @@ class Tetromino extends Group {
     // Rotate Tetromino by rad radians on axis ax="x"||"y"||"z"
     rotate(ax, rads) {
         ax = ax.toLowerCase();
-
+        console.log(this);
         if (ax === "x") {
-            this.rotation.x += rads;
+            this.rotateX(rads);
         } else if (ax === "y") {
-            this.rotation.y += rads;
+            this.rotateY(rads);
         } else if (ax === "z") {
-            this.rotation.z += rads;
+            this.rotateZ(rads);
         }
     }
 
-    // Translate Tetromino by dist units on axis ax="x"||"y"||"z"
-    translate(ax, dist) {
-        ax = ax.toLowerCase();
+    // Translate Tetromino by x, y, and z
+    translate(x, y, z) {
+        this.position.add(new Vector3(x, y, z));
+    }
 
-        if (ax === "x") {
-            this.translateX(dist);
-        } else if (ax === "y") {
-            this.translateY(dist);
-        } else if (ax === "z") {
-            this.translateZ(dist);
+    getMinimumY() {
+        let min = Infinity;
+        for (let i = 0; i < this.children.length; i++) {
+            if (this.children[i].position.y < min) {
+                min = this.children[i].position.y;
+            }
         }
+
+        return min;
     }
 }
 

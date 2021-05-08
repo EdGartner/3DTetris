@@ -64,7 +64,7 @@ const handleImpactEvents = (event) => {
 	// Ignore keypresses typed into a text box
 	if (event.target.tagName === "INPUT") { return; }
 
-	// The vectors tom which each key code in this handler maps. (Change these if you like)
+	// The vectors to which each key code in this handler maps. (Change these if you like)
 	const keyMap = {
 		w: new Vector3(-BLOCK_SIZE, 0, 0),
 		s: new Vector3(BLOCK_SIZE, 0, 0),
@@ -83,7 +83,7 @@ const handleImpactEvents = (event) => {
 	if (keyMap[event.key] !== undefined) {
 
 		let val = keyMap[event.key];
-		
+
 		switch (event.key) {
 			case 'q':
 				curMino.rotateX(val);
@@ -104,7 +104,7 @@ const handleImpactEvents = (event) => {
 				curMino.rotateZ(val);
 				break;
 			default:
-				curMino.position.add(val);
+				scene.translateCurrentMino(val.x, val.y, val.z);
 		}
 	}
 };
