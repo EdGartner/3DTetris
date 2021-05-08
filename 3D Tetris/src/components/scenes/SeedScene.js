@@ -31,7 +31,7 @@ class SeedScene extends Scene {
         this.frame = 0;
         this.dropRate = 90; // Frames per drop
         this.generateOnNextInterval = false; // Generate new mino after dropRate frames?
-        
+
         // Generate gameboard; false = voxel is unoccupied
         this.board = [];
         for (let x = 0; x < globals.BOARD_LENGTH; x++) {

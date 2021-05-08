@@ -81,27 +81,66 @@ const handleImpactEvents = (event) => {
 	const curMino = minos[minos.length - 1];
 
 	if (keyMap[event.key] !== undefined) {
+    let val = keyMap[event.key];
+    let rot = keyMap[event.key];
 
-		let val = keyMap[event.key];
+    let rotation = new Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    console.log(rotation)
+    if (typeof(keyMap[event.key]) == "object") {
+
+      let valRotation;
+      const axis = new Vector3(0, 1, 0);
+      const ninety = Math.PI / 2.0;
+
+      if (rotation.x >= -0.5 && rotation.x < 0.5) {
+        if (rotation.z > 0.5 && rotation.z <= 1) {
+          valRotation = 1.0 * ninety
+        } else {
+          valRotation = 3.0 * ninety
+        }
+      } else if (rotation.x < -0.5) {
+        valRotation = 0.0 * ninety
+      } else {
+        valRotation = 2.0 * ninety
+      }
+
+      val.applyAxisAngle(axis, valRotation);
+    } else {
+
+    }
 
 		switch (event.key) {
-			case 'q':
-				curMino.rotateX(val);
+			case 'f':
+			case 'r':
+      if (rotation.x >= -0.5 && rotation.x < 0.5) {
+        if (rotation.z > 0.5 && rotation.z <= 1) {
+				curMino.rotateX(-rot);
+        } else {
+          curMino.rotateX(rot);
+        }
+      } else if (rotation.x < -0.5) {
+        curMino.rotateZ(-rot);
+      } else {
+        curMino.rotateZ(rot);
+      }
 				break;
 			case 'e':
-				curMino.rotateX(val);
-				break;
-			case 'r':
-				curMino.rotateY(val);
-				break;
-			case 'f':
-				curMino.rotateY(val);
+			case 'q':
+				curMino.rotateY(rot);
 				break;
 			case 'z':
-				curMino.rotateZ(val);
-				break;
 			case 'c':
-				curMino.rotateZ(val);
+      if (rotation.x >= -0.5 && rotation.x < 0.5) {
+        if (rotation.z > 0.5 && rotation.z <= 1) {
+        curMino.rotateZ(rot);
+        } else {
+          curMino.rotateZ(-rot);
+        }
+      } else if (rotation.x < -0.5) {
+        curMino.rotateX(-rot);
+      } else {
+        curMino.rotateX(rot);
+      }
 				break;
 			default:
 				scene.translateCurrentMino(val.x, val.y, val.z);
