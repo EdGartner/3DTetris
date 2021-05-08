@@ -69,11 +69,11 @@ class Tetromino extends Group {
         ax = ax.toLowerCase();
 
         if (ax === "x") {
-            this.rotation.x = rads;
+            this.rotation.x += rads;
         } else if (ax === "y") {
-            this.rotation.y = rads;
+            this.rotation.y += rads;
         } else if (ax === "z") {
-            this.rotation.z = rads;
+            this.rotation.z += rads;
         }
     }
 

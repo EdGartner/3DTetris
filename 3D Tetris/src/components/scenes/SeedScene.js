@@ -27,9 +27,6 @@ class SeedScene extends Scene {
         // Add meshes to scene
         this.minoList = [];
 
-        // Populate GUI
-        this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
-
         // Gameplay variables
         this.frame = 0;
         this.dropRate = 30; // Frames per drop
@@ -51,9 +48,6 @@ class SeedScene extends Scene {
         let BOARD_LENGTH = globals.BOARD_LENGTH;
         let BOARD_HEIGHT = globals.BOARD_HEIGHT;
         let STARTING_YPOS = globals.STARTING_YPOS;
-
-        const { rotationSpeed, updateList } = this.state;
-        this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
         this.frame += 1;
 
