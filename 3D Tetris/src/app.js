@@ -11,12 +11,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { SeedScene } from 'scenes';
 import { OrbitLock } from './orbitLock';
+import { globals } from 'globals';
 
 // Initialize core ThreeJS components
 const scene = new SeedScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 const minos = scene.minoList;
+const BLOCK_SIZE = globals.BLOCK_SIZE;
 
 // Set up camera
 camera.position.set(6, 3, -10);
@@ -59,47 +61,51 @@ windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
 
 const handleImpactEvents = (event) => {
-  // Ignore keypresses typed into a text box
-  if (event.target.tagName === "INPUT") { return; }
+	// Ignore keypresses typed into a text box
+	if (event.target.tagName === "INPUT") { return; }
 
-  // The vectors tom which each key code in this handler maps. (Change these if you like)
-  const keyMap = {
-    w: new Vector3(-0.5, 0, 0),
-    s: new Vector3(0.5, 0, 0),
-    a: new Vector3(0, 0, 0.5),
-    d: new Vector3(0, 0, -0.5),
-    r: -Math.PI / 2,
-    f: Math.PI / 2,
-    z: -Math.PI / 2,
-    c: Math.PI / 2,
-    q: Math.PI / 2,
-    e: -Math.PI / 2,
-  };
+	// The vectors tom which each key code in this handler maps. (Change these if you like)
+	const keyMap = {
+		w: new Vector3(-BLOCK_SIZE, 0, 0),
+		s: new Vector3(BLOCK_SIZE, 0, 0),
+		a: new Vector3(0, 0, BLOCK_SIZE),
+		d: new Vector3(0, 0, -BLOCK_SIZE),
+		r: -Math.PI / 2,
+		f: Math.PI / 2,
+		z: -Math.PI / 2,
+		c: Math.PI / 2,
+		q: Math.PI / 2,
+		e: -Math.PI / 2,
+	};
 
-  if (keyMap[event.key] !== undefined) {
-    switch (event.key) {
-      case 'q':
-        minos[0].rotateX(keyMap[event.key]);
-        break;
-      case 'e':
-        minos[0].rotateX(keyMap[event.key]);
-        break;
-      case 'r':
-        minos[0].rotateY(keyMap[event.key]);
-        break;
-      case 'f':
-        minos[0].rotateY(keyMap[event.key]);
-        break;
-      case 'z':
-        minos[0].rotateZ(keyMap[event.key]);
-        break;
-      case 'c':
-        minos[0].rotateZ(keyMap[event.key]);
-        break;
-      default:
-        minos[0].position.add(keyMap[event.key]);
-    }
+	const curMino = minos[minos.length - 1];
 
-  }
+	if (keyMap[event.key] !== undefined) {
+
+		let val = keyMap[event.key];
+		
+		switch (event.key) {
+			case 'q':
+				curMino.rotateX(val);
+				break;
+			case 'e':
+				curMino.rotateX(val);
+				break;
+			case 'r':
+				curMino.rotateY(val);
+				break;
+			case 'f':
+				curMino.rotateY(val);
+				break;
+			case 'z':
+				curMino.rotateZ(val);
+				break;
+			case 'c':
+				curMino.rotateZ(val);
+				break;
+			default:
+				curMino.position.add(val);
+		}
+	}
 };
 window.addEventListener("keydown", handleImpactEvents);
