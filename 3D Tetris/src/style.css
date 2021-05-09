@@ -1,0 +1,25 @@
+@font-face {
+    font-family: RobotoMono;
+    src: url(RobotoMono-VariableFont_wght.ttf);
+}
+
+button {
+    padding: 7px 14px;
+    outline: none;
+    border-radius: 5px;
+    border-width: small;
+    border-color: black;
+    background: green;
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 150px;
+    width: 150px;
+    font-family: "Lucida Console";
+    font-size: 40px;
+    cursor: pointer;
+    color: black;
+}
+
+button:hover {
+    background-color: rgb(76, 175, 80);
+}

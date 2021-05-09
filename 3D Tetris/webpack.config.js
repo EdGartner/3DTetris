@@ -12,9 +12,7 @@ module.exports = {
     },
     target: 'web',
     devtool: 'source-map',
-    stats: {
-        warnings: false
-    },
+
     module: {
         rules: [
             {
@@ -41,6 +39,18 @@ module.exports = {
                         loader: 'file-loader',
                     },
                 ],
+            },
+            {
+              test: /\.css$/i,
+              use: ['style-loader', 'css-loader'],
+            },
+            {
+              test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+              use: [
+                {
+                  loader: 'file-loader',
+                },
+              ],
             },
         ],
     },

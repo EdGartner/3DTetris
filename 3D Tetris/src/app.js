@@ -10,19 +10,57 @@ import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { SeedScene } from 'scenes';
+import StartScene from './components/scenes/StartScene.js'
 import { OrbitLock } from './orbitLock';
 import { globals } from 'globals';
 
 // Initialize core ThreeJS components
-const scene = new SeedScene();
-const camera = new PerspectiveCamera();
+let seedScene;
+let startScene;
+let minos
+let camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
-const minos = scene.minoList;
 const BLOCK_SIZE = globals.BLOCK_SIZE;
 
-// Set up camera
-camera.position.set(6, 3, -10);
-camera.lookAt(new Vector3(0, 0, 0));
+// Start button (adapted from Chromatic Arrow)
+function initStartScene() {
+  console.log("starting")
+  startScene = new StartScene(startToGameHandler);
+  camera.position.copy(new Vector3(0, 2, 0));
+  camera.lookAt(new Vector3(0, 2, 1)); // camera starts looking down the +z axis
+  windowResizeHandler();
+}
+
+// Scene change functions (adapted from Chromatic Arrow)
+function changeToGame(lastScene) {
+  console.log("are we changing")
+  lastScene.destruct();
+  if (seedScene !== undefined) {
+    seedScene.destruct();
+  }
+  seedScene = new SeedScene();
+  minos = seedScene.minoList;
+
+  // Set up camera
+  camera.position.set(6, 3, -10);
+  camera.lookAt(new Vector3(0, 0, 0));
+
+  // Set up controls
+  const controls = new OrbitLock(camera, canvas);
+  controls.minPolarAngle = 95 * Math.PI / 180;
+  controls.maxPolarAngle = 170 * Math.PI / 180;
+  controls.minDistance = 4;
+  controls.maxDistance = 16;
+  window.addEventListener('click', function () {
+      controls.lock();
+  }, false);
+}
+
+// Start game handler
+const startToGameHandler = () => {
+  changeToGame(startScene);
+  startScene = undefined;
+};
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -32,20 +70,15 @@ document.body.style.margin = 0; // Removes margin around page
 document.body.style.overflow = 'hidden'; // Fix scrolling
 document.body.appendChild(canvas);
 
-// Set up controls
-const controls = new OrbitLock(camera, canvas);
-controls.minPolarAngle = 95 * Math.PI / 180;
-controls.maxPolarAngle = 170 * Math.PI / 180;
-controls.minDistance = 4;
-controls.maxDistance = 16;
-window.addEventListener('click', function () {
-    controls.lock();
-}, false);
-
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    renderer.render(scene, camera);
-    scene.update && scene.update(timeStamp);
+    if (seedScene === undefined) {
+      renderer.render(startScene, camera);
+      startScene.update && startScene.update(timeStamp);
+    } else {
+      renderer.render(seedScene, camera);
+      seedScene.update && seedScene.update(timeStamp);
+    }
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
@@ -143,8 +176,10 @@ const handleImpactEvents = (event) => {
       }
 				break;
 			default:
-				scene.translateCurrentMino(val.x, val.y, val.z);
+				seedScene.translateCurrentMino(val.x, val.y, val.z);
 		}
 	}
 };
 window.addEventListener("keydown", handleImpactEvents);
+
+initStartScene();
