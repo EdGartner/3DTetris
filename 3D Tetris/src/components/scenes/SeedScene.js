@@ -1,11 +1,14 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, Vector3 } from 'three';
+import { Scene, Color, Vector3, BoxGeometry, MeshBasicMaterial, Mesh, GridHelper, EdgesGeometry, WireframeGeometry, LineSegments } from 'three';
 import { Tetromino } from 'objects';
 import { BasicLights } from 'lights';
 import { globals } from '../../globals';
 
 class SeedScene extends Scene {
     constructor() {
+        let BLOCK_SIZE = globals.BLOCK_SIZE;
+        let BOARD_WIDTH = globals.BOARD_WIDTH;
+        let BOARD_HEIGHT = globals.BOARD_HEIGHT;
 
         // Call parent Scene() constructor
         super();
@@ -23,6 +26,24 @@ class SeedScene extends Scene {
         // Add lights
         const lights = new BasicLights();
         this.add(lights);
+
+        // Add base and wireframe play area signifier
+        const base = new BoxGeometry(BLOCK_SIZE * 2 * BOARD_WIDTH, BLOCK_SIZE * 4, BLOCK_SIZE * 2 * BOARD_WIDTH);
+        const texture = new MeshBasicMaterial( { color: 0x002259 } );
+        const baseMesh = new Mesh(base, texture);
+        baseMesh.translateY(globals.STARTING_YPOS - (BLOCK_SIZE * BOARD_HEIGHT) - BLOCK_SIZE * 2 + 0.25);
+        this.add(baseMesh);
+        
+        const grid = new GridHelper(BLOCK_SIZE * BOARD_WIDTH, 4, 0xFFFFFF, 0xFFFFFF);
+        grid.translateY(globals.STARTING_YPOS - (BLOCK_SIZE * BOARD_HEIGHT) + 0.25);
+        console.log(grid.position);
+        this.add(grid);
+
+        const playSpace = new BoxGeometry(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT, BLOCK_SIZE * BOARD_WIDTH);
+        const playSpaceEdges = new EdgesGeometry(playSpace);
+        const playGrid = new LineSegments(playSpaceEdges);
+        this.add(playGrid);
+
 
         // Add meshes to scene
         this.minoList = [];
@@ -51,7 +72,7 @@ class SeedScene extends Scene {
         let types = "ILTOSWAV";
         let type = types[Math.floor(Math.random() * types.length)];
         let mino = new Tetromino(type);
-        mino.translate(0, globals.STARTING_YPOS, 0);
+        mino.translate(globals.STARTING_XPOS, globals.STARTING_YPOS, globals.STARTING_ZPOS);
         this.minoList.push(mino);
         this.add(mino);
     }
