@@ -11,12 +11,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { SeedScene } from 'scenes';
 import StartScene from './components/scenes/StartScene.js'
+import CreditsScene from './components/scenes/CreditsScene.js'
+import InfoScene from './components/scenes/InfoScene.js'
+import ControlsScene from './components/scenes/ControlsScene.js'
 import { OrbitLock } from './orbitLock';
 import { globals } from 'globals';
 
 // Initialize core ThreeJS components
 let seedScene;
 let startScene;
+let infoScene;
+let creditsScene;
+let controlsScene;
 let minos
 let camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
@@ -24,8 +30,12 @@ const BLOCK_SIZE = globals.BLOCK_SIZE;
 
 // Start button (adapted from Chromatic Arrow)
 function initStartScene() {
-  console.log("starting")
-  startScene = new StartScene(startToGameHandler);
+  startScene = new StartScene(
+    startToGameHandler,
+    startToInfoHandler,
+    startToCreditsHandler,
+    startToControlsHandler
+  );
   camera.position.copy(new Vector3(0, 2, 0));
   camera.lookAt(new Vector3(0, 2, 1)); // camera starts looking down the +z axis
   windowResizeHandler();
@@ -33,7 +43,6 @@ function initStartScene() {
 
 // Scene change functions (adapted from Chromatic Arrow)
 function changeToGame(lastScene) {
-  console.log("are we changing")
   lastScene.destruct();
   if (seedScene !== undefined) {
     seedScene.destruct();
@@ -56,11 +65,77 @@ function changeToGame(lastScene) {
   }, false);
 }
 
+function changeToInfo(lastScene) {
+  lastScene.destruct();
+  if (infoScene !== undefined) {
+    infoScene.destruct();
+  }
+  infoScene = new InfoScene(back);
+}
+
+function changeToCredits(lastScene) {
+  lastScene.destruct();
+  if (creditsScene !== undefined) {
+    creditsScene.destruct();
+  }
+  creditsScene = new CreditsScene(back);
+}
+
+function changeToControls(lastScene) {
+  lastScene.destruct();
+  if (controlsScene !== undefined) {
+    controlsScene.destruct();
+  }
+  controlsScene = new ControlsScene(back);
+}
+
+function changeToStart() {
+  if (infoScene !== undefined) {
+    infoScene.destruct();
+  }
+  if (creditsScene !== undefined) {
+    creditsScene.destruct();
+  }
+  if (controlsScene !== undefined) {
+    controlsScene.destruct();
+  }
+  if (startScene !== undefined) {
+    startScene.destruct();
+  }
+  initStartScene();
+}
+
 // Start game handler
 const startToGameHandler = () => {
   changeToGame(startScene);
   startScene = undefined;
 };
+
+// Info handler
+const startToInfoHandler = () => {
+  changeToInfo(startScene);
+  startScene = undefined;
+};
+
+// Credits handler
+const startToCreditsHandler = () => {
+  changeToCredits(startScene);
+  startScene = undefined;
+};
+
+// Controls handler
+const startToControlsHandler = () => {
+  changeToControls(startScene);
+  startScene = undefined;
+};
+
+// Back to start handler
+const back = () => {
+  changeToStart();
+  infoScene = undefined;
+  creditsScene = undefined;
+  controlsScene = undefined;
+}
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);

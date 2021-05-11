@@ -3,19 +3,17 @@ import { BasicLights } from 'lights';
 import '../../style.css'
 import _ from 'lodash';
 
-class StartScene extends Scene {
-    constructor(startGameCallback, infoCallback, creditsCallback,
-      controlsCallback) {
+class ControlsScene extends Scene {
+    constructor(backCallback) {
         // Call parent Scene() constructor
         super();
 
-        console.log("i guess we're starting")
         // Add lights
         this.add(new BasicLights());
 
         // Canvas
         const geometry = new BoxGeometry(100, 100, 1);
-        const color = new Color( 0x000000 );
+        const color = new Color( 0xff0000 );
         const material = new MeshBasicMaterial({color});
         const mesh = new Mesh(geometry, material);
         mesh.position.copy(new Vector3(0, 0, 10));
@@ -24,15 +22,10 @@ class StartScene extends Scene {
         this.add(mesh);
         this.mesh = mesh;
 
-        console.log("mesh should be made")
         // Text and buttons
         this.divElements = [];
         this.divElements.push(this.createText("3D Tetris", "3%"));
-        this.divElements.push(this.createButton("Info", "54%", -150, -1, infoCallback));
-        this.divElements.push(this.createButton("Begin", "54%", 0, -1, startGameCallback));
-        this.divElements.push(this.createButton("Credits", "54%", 150, 28, creditsCallback));
-        this.divElements.push(this.createButton("Controls", "33%", 0, 24, controlsCallback));
-        console.log("do we get thru everything")
+        this.divElements.push(this.createButton("Back", "85%", "5%", -1, backCallback));
     }
 
     createText(str, top) {
@@ -55,16 +48,11 @@ class StartScene extends Scene {
         document.body.appendChild(button);
         // Set content and style
         button.innerHTML = str;
-        button.style.left = (window.innerWidth - button.clientWidth) / 2 + sideOff + 'px';
+        button.style.left = sideOff;
         button.style.top = top;
+        button.style.height = "50px";
         if (font > -1) {
           button.style.fontSize = font + "px";
-        } else if (font === -2) {
-          button.style.fontSize = 70 + "px";
-          button.style.color = "white";
-          button.style.background = "black";
-          button.style.whitespace = "nowrap";
-          button.style.overflow = "hidden";
         }
         button.onclick = callback;
         return button;
@@ -93,4 +81,4 @@ class StartScene extends Scene {
     }
 }
 
-export default StartScene;
+export default ControlsScene;
