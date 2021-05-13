@@ -147,14 +147,54 @@ document.body.appendChild(canvas);
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
-    if (seedScene === undefined) {
-      renderer.render(startScene, camera);
-      startScene.update && startScene.update(timeStamp);
-    } else {
-      renderer.render(seedScene, camera);
-      seedScene.update && seedScene.update(timeStamp);
-    }
-    window.requestAnimationFrame(onAnimationFrameHandler);
+  // Forgive me for what I'm about to do
+  let seed = (
+    startScene == undefined &&
+    creditsScene == undefined &&
+    infoScene == undefined &&
+    controlsScene == undefined
+  )
+  let start = (
+    seedScene == undefined &&
+    creditsScene == undefined &&
+    infoScene == undefined &&
+    controlsScene == undefined
+  )
+  let info = (
+    startScene == undefined &&
+    creditsScene == undefined &&
+    seedScene == undefined &&
+    controlsScene == undefined
+  )
+  let credits = (
+    startScene == undefined &&
+    seedScene == undefined &&
+    infoScene == undefined &&
+    controlsScene == undefined
+  )
+  let controls = (
+    startScene == undefined &&
+    creditsScene == undefined &&
+    infoScene == undefined &&
+    seedScene == undefined
+  )
+  if (start) {
+    renderer.render(startScene, camera);
+    startScene.update && startScene.update(timeStamp);
+  } else if (seed) {
+    renderer.render(seedScene, camera);
+    seedScene.update && seedScene.update(timeStamp);
+  } else if (info) {
+    renderer.render(infoScene, camera);
+    infoScene.update && infoScene.update(timeStamp);
+  } else if (credits) {
+    renderer.render(creditsScene, camera);
+    creditsScene.update && creditsScene.update(timeStamp);
+  } else if (controls) {
+    renderer.render(controlsScene, camera);
+    controlsScene.update && controlsScene.update(timeStamp);
+  }
+  window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 

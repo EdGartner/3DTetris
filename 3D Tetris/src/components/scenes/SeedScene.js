@@ -15,7 +15,7 @@ class SeedScene extends Scene {
 
         // Init state
         this.state = {
-            gui: new Dat.GUI(), // Create GUI for scene
+            //gui: new Dat.GUI(), // Create GUI for scene
             rotationSpeed: 1,
             updateList: [],
         };
@@ -33,7 +33,7 @@ class SeedScene extends Scene {
         const baseMesh = new Mesh(base, texture);
         baseMesh.translateY(globals.STARTING_YPOS - (BLOCK_SIZE * BOARD_HEIGHT) - BLOCK_SIZE * 2 + 0.25);
         this.add(baseMesh);
-        
+
         const grid = new GridHelper(BLOCK_SIZE * BOARD_WIDTH, 4, 0xFFFFFF, 0xFFFFFF);
         grid.translateY(globals.STARTING_YPOS - (BLOCK_SIZE * BOARD_HEIGHT) + 0.25);
         console.log(grid.position);

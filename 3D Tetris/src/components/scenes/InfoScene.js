@@ -13,7 +13,7 @@ class InfoScene extends Scene {
 
         // Canvas
         const geometry = new BoxGeometry(100, 100, 1);
-        const color = new Color( 0xff0000 );
+        const color = new Color( 0x000000 );
         const material = new MeshBasicMaterial({color});
         const mesh = new Mesh(geometry, material);
         mesh.position.copy(new Vector3(0, 0, 10));
@@ -24,19 +24,37 @@ class InfoScene extends Scene {
 
         // Text and buttons
         this.divElements = [];
-        this.divElements.push(this.createText("3D Tetris", "3%"));
+        this.divElements.push(this.createText("3D Tetris", "3%", "75px"));
+        this.divElements.push(this.createText(
+          "This project was part of COS 426, a Computer Graphics course at " +
+          "Princeton University.",
+          "28%",
+          "20px"
+        ));
+        this.divElements.push(this.createText(
+          "We were given three weeks to plan, design, " +
+          "and implement a Graphics project that contributed in some way to " +
+          "existing work.", "38%", "20px"));
+        this.divElements.push(this.createText(
+          "We decided to make a game because it was fun and " +
+          "was a simple way to make people happy.",
+          "48%",
+          "20px"
+        ));
+        this.divElements.push(this.createText("Thanks for the journey.", "68%", "20px"));
         this.divElements.push(this.createButton("Back", "85%", "5%", -1, backCallback));
     }
 
-    createText(str, top) {
+    createText(str, top, size) {
 
-        const text = document.createElement('h1');
+        const text = document.createElement("h1");
         document.body.appendChild(text);
         // Set content and style
         text.innerHTML = str;
         text.style.position = 'absolute';
+        text.style.textAlign = 'center';
         text.style.fontFamily = 'Lucida Console';
-        text.style.fontSize = '75px';
+        text.style.fontSize = size;
         text.style.color = 'white';
         text.style.left = (window.innerWidth - text.clientWidth) / 2 + 'px';
         text.style.top = top;
