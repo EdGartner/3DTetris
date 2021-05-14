@@ -52,6 +52,7 @@ function changeToGame(lastScene) {
   seedScene = new SeedScene();
   minos = seedScene.minoList;
   game = seedScene.game;
+  seedScene.updateScore();
 
   // Set up camera
   camera.position.set(6, 3, -10);
@@ -289,7 +290,7 @@ const handleImpactEvents = (event) => {
           collCheck = game.checkCollision(curMino);
           if (collCheck) curMino.rotateZ(-rot);
         }
-        
+
         if (!collCheck) curMino.prevQuaternion = holdQuat;
         game.update(minos, false);
 				break;
@@ -301,10 +302,10 @@ const handleImpactEvents = (event) => {
         }
         holdQuat = curMino.quaternion.clone();
 				curMino.rotateY(rot);
-        
+
         collCheck = game.checkCollision(curMino);
         if (collCheck) curMino.rotateY(-rot);
-        
+
         if (!collCheck) curMino.prevQuaternion = holdQuat;
         game.update(minos, false);
 				break;
@@ -334,7 +335,7 @@ const handleImpactEvents = (event) => {
           collCheck = game.checkCollision(curMino);
           if (collCheck) curMino.rotateX(-rot);
         }
-        
+
         if (!collCheck) curMino.prevQuaternion = holdQuat;
         game.update(minos, false);
         break;

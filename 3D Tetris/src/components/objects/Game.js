@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 import { globals } from "../../globals";
 
 class Game {
-    constructor() { 
+    constructor() {
         const BOARD_HEIGHT = globals.BOARD_HEIGHT;
         const BOARD_LENGTH = globals.BOARD_LENGTH;
         const BOARD_WIDTH = globals.BOARD_WIDTH;
@@ -43,12 +43,12 @@ class Game {
         const BOARD_HEIGHT = globals.BOARD_HEIGHT;
         const BOARD_LENGTH = globals.BOARD_LENGTH;
         const BOARD_WIDTH = globals.BOARD_WIDTH;
-        
+
 
         // Clear previous positions to null to not leave "streaks" where tetrominos have moved
         let curMino = minos[minos.length - 1];
         let children = curMino.children;
-        
+
         for(let c = 0; c < children.length; c++) {
             if (children[c].prevGame != null) {
                 this.board[children[c].prevGame.y][children[c].prevGame.x][children[c].prevGame.z] = null;
@@ -85,14 +85,14 @@ class Game {
             case 2:
                 basePoints = 100;
                 break;
-            case 3: 
+            case 3:
                 basePoints = 300;
                 break;
             case 4:
                 basePoints = 1200;
                 break;
         }
-        this.points += basePoints * (this.level + 1); 
+        this.points += basePoints * (this.level + 1);
 
         // Move everything down to fill the space
         for (let i = 0; i < planeNum; i++) {

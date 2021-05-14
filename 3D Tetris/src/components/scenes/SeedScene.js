@@ -69,6 +69,22 @@ class SeedScene extends Scene {
         }
     }
 
+    /*updateScore() {
+      const text = document.createElement("h1");
+      document.body.appendChild(text);
+      // Set content and style
+      text.innerHTML = "Score: " + this.game.points;
+      text.style.position = 'absolute';
+      text.style.fontFamily = 'Lucida Console';
+      text.style.fontSize = '30px';
+      text.style.color = 'black';
+      text.style.left = '80%';
+      text.style.top = '85%';
+
+      this.divElements = [];
+      this.divElements.push(text);
+    }*/
+
     generateRandomMino() {
         let types = "ILTOSWAV";
         let type = types[Math.floor(Math.random() * types.length)];
@@ -133,6 +149,7 @@ class SeedScene extends Scene {
         if (this.minoList.length === 0 || this.generateOnNextInterval) {
             this.generateRandomMino();
             this.generateOnNextInterval = false;
+            //this.updateScore();
         } else {
             let curMino = this.minoList[this.minoList.length - 1];
             let minHeight = STARTING_YPOS - (BLOCK_SIZE * BOARD_HEIGHT);
