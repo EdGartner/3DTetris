@@ -52,7 +52,7 @@ function changeToGame(lastScene) {
   seedScene = new SeedScene();
   minos = seedScene.minoList;
   game = seedScene.game;
-  seedScene.updateScore();
+  //seedScene.updateScore();
 
   // Set up camera
   camera.position.set(6, 3, -10);
