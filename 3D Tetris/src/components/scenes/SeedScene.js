@@ -67,8 +67,6 @@ class SeedScene extends Scene {
                 }
             }
         }
-
-        console.log(this.board);
     }
 
     generateRandomMino() {
@@ -113,6 +111,15 @@ class SeedScene extends Scene {
         return !collision;
     }
 
+    getDropRate(level) {
+        let rates = [90, 80, 70, 60, 50, 40, 30, 25, 20, 15, 10, 8, 8, 6, 6, 4, 4, 3, 3, 3, 2, 2, 2, 1];
+        if (level >= rates.length) {
+            return 1;
+        }
+
+        return rates[level];
+    }
+
     update(timeStamp) {
         let BLOCK_SIZE = globals.BLOCK_SIZE;
         let BOARD_WIDTH = globals.BOARD_WIDTH;
@@ -143,7 +150,7 @@ class SeedScene extends Scene {
                 if (this.generateOnNextInterval) {
                     this.game.update(this.minoList, this.generateOnNextInterval);
                     this.game.level = Math.floor(this.game.cleared / 5);
-                    this.dropRate = 90 - (this.game.level) * 5;
+                    this.dropRate = this.getDropRate(this.game.level);
                 }
             }
         }
