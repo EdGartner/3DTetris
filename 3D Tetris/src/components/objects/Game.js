@@ -1,3 +1,4 @@
+import { Vector3 } from "three";
 import { globals } from "../../globals";
 
 class Game {
@@ -7,7 +8,7 @@ class Game {
         const BOARD_WIDTH = globals.BOARD_WIDTH;
         // Board listed as (y, x, z)
         this.board = [];
-        for (let y = 0; y < BOARD_HEIGHT; y++) {
+        for (let y = 0; y < BOARD_HEIGHT + 2; y++) {
             let xRow = [];
             for (let x = 0; x < BOARD_WIDTH; x++) {
                 let zCol = [];
@@ -28,47 +29,48 @@ class Game {
         this.level = 0;
     }
 
+    gameCoords (pos) {
+        let gamePos = new Vector3();
+        gamePos.y = Math.floor((pos.y + 3.1) * 2 + 1);
+        gamePos.x = Math.floor(pos.x * 2 + 2.1);
+        gamePos.z = Math.floor(pos.z * 2 + 2.1);
+        return gamePos;
+    }
+
     // Most important function of the class. Keeps track of each cube's position in the game board.
     // Triggers plane clears, as well as awards and tallies points for the game
-    // This function will be reworked and optimized when a "previous position" is added to tetrominos
     update (minos, final) {
         const BOARD_HEIGHT = globals.BOARD_HEIGHT;
         const BOARD_LENGTH = globals.BOARD_LENGTH;
         const BOARD_WIDTH = globals.BOARD_WIDTH;
+        
 
-        // Clear positions to null to not leave "streaks" where tetrominos have moved
-        for (let y = 0; y < BOARD_HEIGHT; y++) {
-            for (let x = 0; x < BOARD_WIDTH; x++) {
-                for (let z = 0; z < BOARD_LENGTH; z++) {
-                    this.board[y][x][z] = null;
-                }
+        // Clear previous positions to null to not leave "streaks" where tetrominos have moved
+        let curMino = minos[minos.length - 1];
+        let children = curMino.children;
+        
+        for(let c = 0; c < children.length; c++) {
+            if (children[c].prevGame != null) {
+                this.board[children[c].prevGame.y][children[c].prevGame.x][children[c].prevGame.z] = null;
+                this.planeMinos[children[c].prevGame.y]--;
             }
-            this.planeMinos[y] = 0;
         }
+
 
         // Fill current positions in game board
-        for (let m = 0; m < minos.length; m++) {
-            let cubes = m.children;
-            for (let c = 0; c < cubes.length; c++) {
-                let copy = cubes[c].position.clone();
-                let y = Math.floor(copy.y + 3.1);
-                let x = Math.floor(copy.x * 2 + 2.1);
-                let z = Math.floor(copy.z * 2 + 2.1);
-                this.board[y][x][z] = cubes[c];
-            }
+        for (let c = 0; c < children.length; c++) {
+            let copy = this.gameCoords(curMino.position.clone().add(children[c].position.clone().applyQuaternion(curMino.quaternion)));
+            this.board[copy.y][copy.x][copy.z] = children[c];
+            this.planeMinos[copy.y]++;
+            children[c].prevGame = copy;
         }
 
-        // Count number of cubes in a layer
+        // Clear full layers
         let planeNum = 0;
         for (let y = 0; y < BOARD_HEIGHT; y++) {
-            for (let x = 0; x < BOARD_WIDTH; x++) {
-                for (let z = 0; z < BOARD_WIDTH; z++) {
-                    if (this.board !== null) this.planeMinos[y]++;
-                }
-            }
             if (final) {
                 if (this.planeMinos[y] == 16){
-                    clearPlane(y);
+                    this.clearPlane(y);
                     planeNum++;
                 }
             }
@@ -96,8 +98,12 @@ class Game {
         for (let i = 0; i < planeNum; i++) {
             for (let m = 0; m < minos.length; m++) {
                 minos[m].translate(0, -globals.BLOCK_SIZE, 0);
+                let mino = [];
+                mino.push(minos[m]);
+                this.update(mino, false);
             }
         }
+        console.log(this.board);
     }
 
     clearPlane(y) {
@@ -112,11 +118,44 @@ class Game {
                 let mino = current.parent;
                 let pieces = mino.children;
                 for (let i = 0; i < pieces.length; i++) {
-                    if (current.points.equals(pieces[i].position)) {
+                    if (current.position.equals(pieces[i].position)) {
                         mino.cut(i);
                     }
                 }
+                this.board[y][x][z] = null;
             }
         }
+        this.planeMinos[y] = 0;
+    }
+
+    checkCollision(newMino) {
+        let children = newMino.children;
+        for (let c = 0; c < children.length; c++) {
+            let copy = this.gameCoords(newMino.position.clone().add(children[c].position.clone().applyQuaternion(newMino.quaternion)));
+            // If the new child is outside the bounds, return that a collision has ocurred
+            if (copy.x < 0 || copy.x > 3 || copy.z < 0 || copy.z > 3 || copy.y > 16 || copy.y <= 0) {
+                return true;
+            }
+        }
+        for (let c = 0; c < children.length; c++) {
+            let copy = this.gameCoords(newMino.position.clone().add(children[c].position.clone().applyQuaternion(newMino.quaternion)));
+            // If there is a cube in the next position, check if it is part of the same tetromino.
+            if (this.board[copy.y][copy.x][copy.z] != null) {
+                // Test each of the prevGame coordinates. If there is one that is the same, it is from the same tetromino, and that is not a collision
+                let same = false;
+                for (let i = 0; i < children.length; i++) {
+                    if (copy.equals(children[i].prevGame)) {
+                        same = true;
+                        break;
+                    }
+                }
+                // If the algorithm goes through all the children without finding equality, that other must be another tetromino, and a collision has occurred.
+                if (!same) return true;
+            }
+        }
+        // If all the children are found to not have collisions, then there are no collisions
+        return false;
     }
 }
+
+export default Game;

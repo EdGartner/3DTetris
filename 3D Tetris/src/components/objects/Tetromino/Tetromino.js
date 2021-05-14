@@ -7,6 +7,12 @@ class Cube extends Group {
         // Call Mesh constructor
         super();
 
+        // Store previous position
+        this.previousPosition = null;
+
+        // Store previous game position
+        this.prevGame = null;
+
         let BLOCK_SIZE = globals.BLOCK_SIZE;
 
         // Create Cube using three.js
@@ -33,6 +39,12 @@ class Tetromino extends Group {
         super();
 
         let BLOCK_SIZE = globals.BLOCK_SIZE;
+
+        // Store previous quaternion
+        this.prevQuaternion = this.quaternion;
+
+        // Store previous position
+        this.prevPosition = null;
 
         // Dictionary of types of tetrominoes, describing their color and
         // each cubie's offset from the center.
@@ -79,14 +91,21 @@ class Tetromino extends Group {
 
     // Translate Tetromino by x, y, and z
     translate(x, y, z) {
+        for (let c = 0; c < this.children.length; c++) {
+            this.children[c].previousPosition = this.children[c].position;
+        }
+        let holdPos = this.position.clone();
         this.position.add(new Vector3(x, y, z));
+        
+        this.previousPosition = holdPos;
     }
 
     getMinimumY() {
         let min = Infinity;
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].position.y < min) {
-                min = this.children[i].position.y;
+            let val = this.children[i].position.clone().applyQuaternion(this.quaternion).y;
+            if (val < min) {
+                min = val;
             }
         }
 

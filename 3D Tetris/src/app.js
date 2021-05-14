@@ -16,6 +16,7 @@ import InfoScene from './components/scenes/InfoScene.js'
 import ControlsScene from './components/scenes/ControlsScene.js'
 import { OrbitLock } from './orbitLock';
 import { globals } from 'globals';
+import Game from './components/objects/Game.js';
 
 // Initialize core ThreeJS components
 let seedScene;
@@ -23,7 +24,8 @@ let startScene;
 let infoScene;
 let creditsScene;
 let controlsScene;
-let minos
+let minos;
+let game;
 let camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 const BLOCK_SIZE = globals.BLOCK_SIZE;
@@ -49,6 +51,7 @@ function changeToGame(lastScene) {
   }
   seedScene = new SeedScene();
   minos = seedScene.minoList;
+  game = seedScene.game;
 
   // Set up camera
   camera.position.set(6, 3, -10);
@@ -257,39 +260,84 @@ const handleImpactEvents = (event) => {
 
     }
 
+    // Handles rotation based on the current camera position. If a collision is detected, it will undo any work that has been done.
+    let holdQuat;
+    let collCheck;
 		switch (event.key) {
 			case 'f':
 			case 'r':
-      if (rotation.x >= -0.5 && rotation.x < 0.5) {
-        if (rotation.z > 0.5 && rotation.z <= 1) {
-				curMino.rotateX(-rot);
-        } else {
-          curMino.rotateX(rot);
+        for (let c = 0; c < curMino.children.length; c++) {
+            curMino.children[c].previousPosition = curMino.children[c].position;
         }
-      } else if (rotation.x < -0.5) {
-        curMino.rotateZ(-rot);
-      } else {
-        curMino.rotateZ(rot);
-      }
+        holdQuat = curMino.quaternion.clone();
+        if (rotation.x >= -0.5 && rotation.x < 0.5) {
+          if (rotation.z > 0.5 && rotation.z <= 1) {
+          curMino.rotateX(-rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateX(rot);
+          } else {
+            curMino.rotateX(rot);
+            collCheck = game.checkCollision(curMino);
+            if (collCheck) curMino.rotateX(-rot);
+          }
+        } else if (rotation.x < -0.5) {
+          curMino.rotateZ(-rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateZ(rot);
+        } else {
+          curMino.rotateZ(rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateZ(-rot);
+        }
+        
+        if (!collCheck) curMino.prevQuaternion = holdQuat;
+        game.update(minos, false);
 				break;
+
 			case 'e':
 			case 'q':
+        for (let c = 0; c < curMino.children.length; c++) {
+          curMino.children[c].previousPosition = curMino.children[c].position;
+        }
+        holdQuat = curMino.quaternion.clone();
 				curMino.rotateY(rot);
+        
+        collCheck = game.checkCollision(curMino);
+        if (collCheck) curMino.rotateY(-rot);
+        
+        if (!collCheck) curMino.prevQuaternion = holdQuat;
+        game.update(minos, false);
 				break;
+
 			case 'z':
 			case 'c':
-      if (rotation.x >= -0.5 && rotation.x < 0.5) {
-        if (rotation.z > 0.5 && rotation.z <= 1) {
-        curMino.rotateZ(rot);
-        } else {
-          curMino.rotateZ(-rot);
+        for (let c = 0; c < curMino.children.length; c++) {
+          curMino.children[c].previousPosition = curMino.children[c].position;
         }
-      } else if (rotation.x < -0.5) {
-        curMino.rotateX(-rot);
-      } else {
-        curMino.rotateX(rot);
-      }
-				break;
+        holdQuat = curMino.quaternion.clone();
+        if (rotation.x >= -0.5 && rotation.x < 0.5) {
+          if (rotation.z > 0.5 && rotation.z <= 1) {
+          curMino.rotateZ(rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateZ(-rot);
+          } else {
+            curMino.rotateZ(-rot);
+            collCheck = game.checkCollision(curMino);
+            if (collCheck) curMino.rotateZ(rot);
+          }
+        } else if (rotation.x < -0.5) {
+          curMino.rotateX(-rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateX(rot);
+        } else {
+          curMino.rotateX(rot);
+          collCheck = game.checkCollision(curMino);
+          if (collCheck) curMino.rotateX(-rot);
+        }
+        
+        if (!collCheck) curMino.prevQuaternion = holdQuat;
+        game.update(minos, false);
+        break;
 			default:
 				seedScene.translateCurrentMino(val.x, val.y, val.z);
 		}

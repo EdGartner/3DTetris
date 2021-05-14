@@ -1,8 +1,9 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, Vector3, BoxGeometry, MeshBasicMaterial, Mesh, GridHelper, EdgesGeometry, WireframeGeometry, LineSegments } from 'three';
+import { Scene, Color, Vector3, BoxGeometry, MeshBasicMaterial, Mesh, GridHelper, EdgesGeometry, WireframeGeometry, LineSegments, GammaEncoding } from 'three';
 import { Tetromino } from 'objects';
 import { BasicLights } from 'lights';
 import { globals } from '../../globals';
+import { Game } from '../../components/objects';
 
 class SeedScene extends Scene {
     constructor() {
@@ -44,6 +45,8 @@ class SeedScene extends Scene {
         const playGrid = new LineSegments(playSpaceEdges);
         this.add(playGrid);
 
+        // Initialize Game Object
+        this.game = new Game();
 
         // Add meshes to scene
         this.minoList = [];
@@ -93,27 +96,21 @@ class SeedScene extends Scene {
     // Handle collision detection - do not translate if collision will occur
     translateCurrentMino(x, y, z) {
         let curMino = this.minoList[this.minoList.length - 1];
+        // Store previous positions
+        for (let c = 0; c < curMino.children.length; c++) {
+            curMino.children[c].previousPosition = curMino.children[c].position;
+        }
+        let holdPos = curMino.position.clone();
+
         curMino.translate(x, y, z);
+        // Check collision, undo translate if collision
+        let collision = this.game.checkCollision(curMino);
+        if (collision) curMino.translate(-x, -y, -z);
+        if (!collision) curMino.previousPosition = holdPos;
 
-        let collision = false;
-        // Handle collision detection
-        for (let i = 0; i < curMino.children.length; i++) {
-            let pos_i = this.boardPositionOfChild(curMino, i);
-            if (pos_i.y < globals.BOARD_HEIGHT) { // Ignore initial frame
-                if (pos_i.x < 0 || pos_i.y < 0 || pos_i.z < 0 ||
-                    pos_i.x >= globals.BOARD_LENGTH || pos_i.z >= globals.BOARD_WIDTH ||
-                    this.board[pos_i.x][pos_i.y][pos_i.z]) {
-                    collision = true;
-                }
-            }
-        }
+        this.game.update(this.minoList, this.generateOnNextInterval);
 
-        if (!collision) {
-            return true;
-        } else {
-            curMino.translate(-x, -y, -z);
-            return false;
-        }
+        return !collision;
     }
 
     update(timeStamp) {
@@ -142,12 +139,11 @@ class SeedScene extends Scene {
                     this.generateOnNextInterval = true;
                 }
 
+                // Update board, level, and drop rate.
                 if (this.generateOnNextInterval) {
-                    for (let i = 0; i < curMino.children.length; i++) {
-                        let pos_i = this.boardPositionOfChild(curMino, i);
-                        console.log(pos_i);
-                        this.board[pos_i.x][pos_i.y][pos_i.z] = true;
-                    }
+                    this.game.update(this.minoList, this.generateOnNextInterval);
+                    this.game.level = Math.floor(this.game.cleared / 5);
+                    this.dropRate = 90 - (this.game.level) * 5;
                 }
             }
         }
